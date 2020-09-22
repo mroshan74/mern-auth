@@ -31,8 +31,8 @@ const userSchema = new Schema(
             required: true
         },
         role: {
-            type: Number,
-            default: 0
+            type: String,
+            default: 'user'
         },
         resetPasswordLink: {
             data: String,
