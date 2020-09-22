@@ -1,0 +1,32 @@
+{
+  "name": "mern-auth-server",
+  "version": "1.0.0",
+  "description": "mern complete authentication",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mroshan74/mern-auth.git"
+  },
+  "keywords": [
+    "mern-auth-boilerplate"
+  ],
+  "author": "Roshan",
+  "license": "ISC",
+  "dependencies": {
+    "@sendgrid/mail": "^7.2.6",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "express-validator": "^6.6.1",
+    "google-auth-library": "^6.0.6",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.6",
+    "morgan": "^1.10.0",
+    "validator": "^13.1.17"
+  }
+}
