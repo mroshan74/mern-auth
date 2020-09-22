@@ -6,7 +6,7 @@ const cors = require('cors')
 require('dotenv').config()
 
 if(process.env.NODE_ENV == 'development'){
-    app.use(cors({origin: CLIENT_URL}))
+    app.use(cors({origin: process.env.CLIENT_URL}))
 }
 
 app.use(morgan('dev'))

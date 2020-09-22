@@ -1,6 +1,6 @@
 const { check } = require('express-validator')
 
-exports.registerValidator = (req,res) => [
+exports.runRegisterCheck = [
     check('username')
         .not()
         .isEmpty()
