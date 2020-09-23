@@ -1,6 +1,8 @@
 import React, { Fragment, useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
+import { authenticate } from '../../auth/helpers'
+
 import axios from '../../config/axios'
 import 'react-toastify/dist/ReactToastify.min.css'
 import Layout from '../../core/Layout'
@@ -31,11 +33,13 @@ const Login = () => {
             .then(response => {
                 console.log(response.data)
                 if(response.data.ok == true){
-                    toast.success(response.data.msg)
-                    setState({
-                        password: "",
-                        email: "",
-                        buttonText: "Signed In"
+                    authenticate(response,()=>{
+                        toast.success(response.data.msg)
+                        setState({
+                            password: "",
+                            email: "",
+                            buttonText: "Signed In"
+                        })
                     })
                 }
                 else if(response.data.ok == false){

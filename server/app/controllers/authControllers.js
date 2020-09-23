@@ -139,8 +139,10 @@ authControllers.login = (req,res) => {
 
                         const token = jwt.sign(tokenData, process.env.JWT_SECRET,{expiresIn: '1d'})
                         res.json({
+                            ok: true,
                             token,
-                            user: tokenData
+                            user: tokenData,
+                            msg: 'Login Successful'
                         })
                     }
                     else{
