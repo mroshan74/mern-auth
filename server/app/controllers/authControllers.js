@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 const sgMail = require('@sendgrid/mail')
-const authControllers = {}
 const User = require('../models/user')
+const authControllers = {}
 
 sgMail.setApiKey(process.env.SEND_GRID_SECRET_KEY)
 
@@ -52,7 +52,7 @@ authControllers.register = (req,res) => {
                 console.log(err)
                 res.status(422).json({
                     ok:false,
-                    msg: 'Failed to register, please try agin later',
+                    msg: 'Failed to register, please try again later',
                     err
                 })
             })
@@ -74,17 +74,35 @@ authControllers.accountActivation = (req,res) => {
                 const {username,password,email} = decoded
                 //console.log(decoded,'------------->decoded')
                 //const {username,password,email} = jwt.decode(token)
-                const user = new User({username,password,email})
-                    user.save()
+                User.findOne({email})
                     .then(user => {
-                        res.json({
-                            ok: true,
-                            msg: 'User successfully registered',
-                            user: {
-                                username: user.username,
-                                email: user.email
-                            }
-                        })
+                        if(user){
+                            return res.status(401).json({
+                                ok: false,
+                                msg: 'This account is verified or already exists, please register for a new account'
+                            })
+                        }
+                        else{
+                            const user = new User({username,password,email})
+                            user.save()
+                            .then(user => {
+                                res.json({
+                                    ok: true,
+                                    msg: 'User successfully registered',
+                                    user: {
+                                        username: user.username,
+                                        email: user.email
+                                    }
+                                })
+                            })
+                            .catch(err => {
+                                res.status(401).json({
+                                    ok: false,
+                                    msg: 'Failed to save user, please try again',
+                                    err
+                                })
+                            })
+                        }
                     })
                     .catch(err => {
                         res.status(401).json({
@@ -121,7 +139,8 @@ authControllers.login = (req,res) => {
 
                         const token = jwt.sign(tokenData, process.env.JWT_SECRET,{expiresIn: '1d'})
                         res.json({
-                            token
+                            token,
+                            user: tokenData
                         })
                     }
                     else{
