@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react'
 import { Link, withRouter } from 'react-router-dom'
+import { isUser, isSignedIn, isAdmin } from '../auth/isAuth'
+import { signout } from '../auth/helpers'
 
 const activeLink = (history, path) => {
     if(history.location.pathname === path){
@@ -16,12 +18,31 @@ const Layout = ({children,history}) => {
             <li className="nav-item">
                 <Link className='nav-link' style={activeLink(history,'/')} to="/" >Home</Link>
             </li>
-            <li className="nav-item">
-                <Link className='nav-link' style={activeLink(history,'/users/register')} to="/users/register" >Register</Link>
-            </li>
-            <li className="nav-item">
-                <Link className='nav-link' style={activeLink(history,'/users/login')} to="/users/login" >Login</Link>
-            </li>
+            {isSignedIn() ? (
+                <Fragment>
+                    {isAdmin() && (
+                        <li className="nav-item">
+                        <Link className='nav-link' style={activeLink(history,'/admin')} to="/admin" >Admin</Link>
+                    </li>
+                    )}
+                    <li className="nav-item">
+                        <Link className='nav-link' style={activeLink(history,'/users/logout')} to='#' onClick={() => {
+                            signout(() => {
+                                history.push('/')
+                            })
+                        }}>Logout</Link>
+                    </li>
+                </Fragment>
+            ):
+            (<Fragment>
+                <li className="nav-item">
+                    <Link className='nav-link' style={activeLink(history,'/users/register')} to="/users/register" >Register</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className='nav-link' style={activeLink(history,'/users/login')} to="/users/login" >Login</Link>
+                </li>
+            </Fragment>)
+            }
         </ul>
     )
     return(

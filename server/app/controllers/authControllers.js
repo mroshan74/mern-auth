@@ -16,6 +16,39 @@ authControllers.register = (req,res) => {
                     msg: 'Email already in use'
                 })
             }
+            else{
+                const token = jwt.sign(body,process.env.JWT_ACCOUNT_ACTIVATION,{expiresIn: '10m'})
+        
+                const emailData = {
+                    from: process.env.EMAIL_FROM,
+                    to: body.email,
+                    subject: `Account activation link`,
+                    html: `
+                        <h1>Hi <span style="color:blue;">${body.username}</span></h1>
+                        <p>Click the link below to activate the account </p>
+                        <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
+                        <hr/>
+                        <p>This email contain sensitive information</p>
+                    `
+                }
+
+                sgMail.send(emailData)
+                    .then(sent => {
+                        console.log('register email sent',sent)
+                        return res.json({
+                            ok: true,
+                            msg: `Verification email sent to ${body.email}, please confirm the email to complete registration`
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.status(422).json({
+                            ok:false,
+                            msg: 'Failed to register, please try again later',
+                            err
+                        })
+                    })
+            }
         })
         .catch(err => {
             res.status(500).json({
@@ -25,37 +58,6 @@ authControllers.register = (req,res) => {
             })
         })
 
-        const token = jwt.sign(body,process.env.JWT_ACCOUNT_ACTIVATION,{expiresIn: '10m'})
-        
-        const emailData = {
-            from: process.env.EMAIL_FROM,
-            to: body.email,
-            subject: `Account activation link`,
-            html: `
-                <h1>Hi <span style="color:blue;">${body.username}</span></h1>
-                <p>Click the link below to activate the account </p>
-                <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
-                <hr/>
-                <p>This email contain sensitive information</p>
-            `
-        }
-
-        sgMail.send(emailData)
-            .then(sent => {
-                console.log('register email sent',sent)
-                return res.json({
-                    ok: true,
-                    msg: `Verification email sent to ${body.email}, please confirm the email to complete registration`
-                })
-            })
-            .catch(err => {
-                console.log(err)
-                res.status(422).json({
-                    ok:false,
-                    msg: 'Failed to register, please try again later',
-                    err
-                })
-            })
 }
 
 authControllers.accountActivation = (req,res) => {

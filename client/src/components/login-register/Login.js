@@ -1,18 +1,26 @@
-import React, { Fragment, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import React, { Fragment, useEffect, useState } from 'react'
+import { Link, Redirect, useHistory } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import { authenticate } from '../../auth/helpers'
+import { isAdmin, isSignedIn } from '../../auth/isAuth'
 
 import axios from '../../config/axios'
 import 'react-toastify/dist/ReactToastify.min.css'
 import Layout from '../../core/Layout'
 
 const Login = () => {
+    const history = useHistory()
     const [state,setState] = useState({
         email: "christinaagnes95@gmail.com",
         password: "secret123",
         buttonText: "Sign In"
     })
+
+    useEffect(() => {
+        if(isSignedIn()){
+            history.push('/')
+        }
+    },[])
 
     const handleChange = (e) => {
         setState({
@@ -40,6 +48,9 @@ const Login = () => {
                             email: "",
                             buttonText: "Signed In"
                         })
+                        setTimeout(() => {
+                            isAdmin() ? history.push('/admin') : history.push('/')
+                        },3000)
                     })
                 }
                 else if(response.data.ok == false){

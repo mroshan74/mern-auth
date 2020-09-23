@@ -33,8 +33,15 @@ export const removeLocalStorage = (key) => {
 }
 
 export const authenticate = (response,next) => {
-    console.log('authenticate response middleware',response)
+    //console.log('authenticate response middleware',response)
     setCookie('token',response.data.token)
     setLocalStorage('user',response.data.user)
+    next()
+}
+
+export const signout = (next) => {
+    console.log('signout middleware')
+    removeCookie('token')
+    removeLocalStorage('user')
     next()
 }
