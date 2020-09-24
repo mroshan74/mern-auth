@@ -24,7 +24,7 @@ router.put('/users/account/update', authenticateUser, runUpdateCheck, runValidat
 router.put('/admin/account/update', authenticateUser,isAdmin, runUpdateCheck, runValidation, userControllers.update)
 
 //forget/reset password
-router.put('/users/reset-password', runResetCheck, runValidation, authControllers.forgotPassword)
+router.put('/users/account/reset', runResetCheck, runValidation, authControllers.forgotPassword)
 router.put('/auth/reset/:token',runNewPassCheck, runValidation, authControllers.resetPassword)
 
 

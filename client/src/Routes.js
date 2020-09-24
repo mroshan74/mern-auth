@@ -14,6 +14,10 @@ import AdminPage from './components/test/AdminPage'
 import PrivatePage from './components/test/PrivatePage'
 import AdminAccount from './components/user/AdminAccount'
 
+import ForgotPassword from './components/user/ForgotPassword'
+import ResetPassword from './components/user/ResetPassword'
+
+
 const Routes = () => (
     <BrowserRouter>
         <Switch>
@@ -25,6 +29,8 @@ const Routes = () => (
             <PrivateRoute exact path='/private' component={PrivatePage} />
             <PrivateRoute exact path='/users/account' component={Account} />
             <AdminRoute exact path='/admin/account' component={AdminAccount} />
+            <Route exact path='/users/account/reset' component={ForgotPassword} />
+            <Route exact path='/users/auth/reset/:token' component={ResetPassword} />
         </Switch>
     </BrowserRouter>
 )
