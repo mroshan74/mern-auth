@@ -1,11 +1,15 @@
 import React from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import App from './App'
-import Activate from './components/login-register/Activate'
-import Login from './components/login-register/Login'
-import Register from './components/login-register/Register'
+
 import AdminRoute from './auth/AdminRoute'
 import PrivateRoute from './auth/PrivateRoute'
+import Account from './components/user/Account'
+
+import Register from './components/user/Register'
+import Activate from './components/user/Activate'
+import Login from './components/user/Login'
+
 import AdminPage from './components/test/AdminPage'
 import PrivatePage from './components/test/PrivatePage'
 
@@ -18,6 +22,7 @@ const Routes = () => (
             <Route exact path='/auth/activate/:encrypted' component={Activate} />
             <AdminRoute exact path='/admin' component={AdminPage} />
             <PrivateRoute exact path='/private' component={PrivatePage} />
+            <PrivateRoute exact path='/users/account' component={Account} />
         </Switch>
     </BrowserRouter>
 )

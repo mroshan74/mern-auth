@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const bcryptjs = require('bcryptjs')
 const userControllers = {}
 
 userControllers.account = (req,res) => {
@@ -14,23 +15,39 @@ userControllers.account = (req,res) => {
 
 userControllers.update = (req,res) => {
     const { body, user } = req
-    User.findOneAndUpdate({_id: user._id}, body, {
-        new: true,
-        select: 'username email role',
-    })
+    User.findOne({_id: user._id})
         .then(user => {
-            if(user){
-                return res.json({
-                    ok: true,
-                    user
-                })
+            if(body.username){
+                user.username = body.username
             }
-            else {
-                res.status(400).json({ 
-                    ok: false,
-                    msg: 'User update failed'
-                })
+            if(body.password){
+                user.password = body.password
             }
+            user.save()
+                .then(updatedUser => {
+                    if(updatedUser){
+                        const { _id , username, email, role } = updatedUser
+                        return res.json({
+                            ok: true,
+                            user: {
+                                _id , username, email, role
+                            }
+                        })
+                    }
+                    else {
+                        res.status(400).json({ 
+                            ok: false,
+                            msg: 'User update failed'
+                        })
+                    }
+                })
+                .catch(err => {
+                    res.status(502).json({ 
+                        ok: false,
+                        msg: 'User update failed',
+                        err
+                    })
+                })
         })
         .catch(err => {
             res.status(502).json({ 

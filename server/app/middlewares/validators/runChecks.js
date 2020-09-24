@@ -24,13 +24,18 @@ exports.runLoginCheck = [
 
 exports.runUpdateCheck = [
     check('username')
-        .optional("",null,undefined)
+        .optional({checkFalsy: true})
         .isLength({min: 4})
         .withMessage('Username should be of minimum 4 characters'),
         
 
     check('email')
-        .optional("",null,undefined)
+        .optional({checkFalsy: true})
         .isEmail()
         .withMessage('Email should be valid'),
+    
+    check('password')
+        .optional({checkFalsy: true})
+        .isLength({min: 6})
+        .withMessage('Password should be of minimum 6 characters')
 ]

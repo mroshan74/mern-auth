@@ -1,17 +1,26 @@
-import React, { Fragment, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
+import { authenticate } from '../../auth/helpers'
+import { isAdmin, isSignedIn } from '../../auth/isAuth'
+
 import axios from '../../config/axios'
 import 'react-toastify/dist/ReactToastify.min.css'
 import Layout from '../../core/Layout'
 
-const Register = () => {
+const Login = () => {
+    const history = useHistory()
     const [state,setState] = useState({
-        username: "Christina Agnes",
-        password: "secret123",
         email: "christinaagnes95@gmail.com",
-        buttonText: "Register"
+        password: "secret123",
+        buttonText: "Sign In"
     })
+
+    useEffect(() => {
+        if(isSignedIn()){
+            history.push('/')
+        }
+    },[])
 
     const handleChange = (e) => {
         setState({
@@ -22,29 +31,33 @@ const Register = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        setState({...state,buttonText:'Registering'})
-        const {username,password,email} = state
+        setState({...state,buttonText:'Logging In'})
+        const {password,email} = state
         const fd ={
-            username,password,email
+            password,email
         }
         console.log(fd)
-        axios.post(`/users/register`,fd)
+        axios.post(`/users/login`,fd)
             .then(response => {
-                console.log(response)
+                console.log(response.data)
                 if(response.data.ok == true){
-                    toast.success(response.data.msg)
-                    setState({
-                        username: "",
-                        password: "",
-                        email: "",
-                        buttonText: "Registered"
+                    authenticate(response,()=>{
+                        toast.success(response.data.msg)
+                        setState({
+                            password: "",
+                            email: "",
+                            buttonText: "Signed In"
+                        })
+                        setTimeout(() => {
+                            isAdmin() ? history.push('/admin') : history.push('/')
+                        },3000)
                     })
                 }
                 else if(response.data.ok == false){
                     toast.error(response.data.msg)
                     setState({
                         ...state,
-                        buttonText: "Register"
+                        buttonText: "Sign In"
                     })
                 }
             })
@@ -54,18 +67,14 @@ const Register = () => {
                     toast.error(err.response.data.msg)
                     setState({
                         ...state,
-                        buttonText: "Register"
+                        buttonText: "Sign In"
                     })
                 }
             })
     }
 
-    const registerForm = () => (
+    const loginForm = () => (
         <form onSubmit={handleSubmit}>
-            <div className='form-group'>
-                <label className='text-muted'>Username</label>
-                <input className='form-control' type='text' name='username' value={state.username} onChange={handleChange}/>
-            </div>
             <div className='form-group'>
                 <label className='text-muted'>Email</label>
                 <input className='form-control' type='email' name='email' value={state.email} onChange={handleChange}/>
@@ -83,11 +92,10 @@ const Register = () => {
         <Layout>
             <div className='col-md-6 offset-3'>
                 <ToastContainer/>
-                <h1 className='text-center p-5'>Register</h1>
-                {registerForm()}
+                <h1 className='text-center p-5'>Login</h1>
+                {loginForm()}
             </div>
         </Layout>
     )
 }
-
-export default Register
+export default Login

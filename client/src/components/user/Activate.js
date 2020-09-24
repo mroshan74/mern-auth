@@ -1,10 +1,11 @@
-import React, { Fragment, useState, useEffect, useMemo } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import React, { useState, useEffect, useMemo } from 'react'
+import { Redirect } from 'react-router-dom'
 import jwt from 'jsonwebtoken'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from '../../config/axios'
-import 'react-toastify/dist/ReactToastify.min.css'
+
 import Layout from '../../core/Layout'
+import 'react-toastify/dist/ReactToastify.min.css'
 
 const Activate = (props) => {
     const [state,setState] = useState({

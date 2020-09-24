@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import { isUser, isSignedIn, isAdmin } from '../auth/isAuth'
+import { isSignedIn, isAdmin } from '../auth/isAuth'
 import { signout } from '../auth/helpers'
 
 const activeLink = (history, path) => {
@@ -25,6 +25,11 @@ const Layout = ({children,history}) => {
                         <Link className='nav-link' style={activeLink(history,'/admin')} to="/admin" >Admin</Link>
                     </li>
                     )}
+                    <li className="nav-item">
+                        <Link className='nav-link' style={activeLink(history,'/users/account')} to='/users/account'>
+                            Account
+                        </Link>
+                    </li>
                     <li className="nav-item">
                         <Link className='nav-link' style={activeLink(history,'/users/logout')} to='#' onClick={() => {
                             signout(() => {

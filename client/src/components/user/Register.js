@@ -1,26 +1,16 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { Link, Redirect, useHistory } from 'react-router-dom'
+import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
-import { authenticate } from '../../auth/helpers'
-import { isAdmin, isSignedIn } from '../../auth/isAuth'
-
 import axios from '../../config/axios'
 import 'react-toastify/dist/ReactToastify.min.css'
 import Layout from '../../core/Layout'
 
-const Login = () => {
-    const history = useHistory()
+const Register = () => {
     const [state,setState] = useState({
-        email: "christinaagnes95@gmail.com",
+        username: "Christina Agnes",
         password: "secret123",
-        buttonText: "Sign In"
+        email: "christinaagnes95@gmail.com",
+        buttonText: "Register"
     })
-
-    useEffect(() => {
-        if(isSignedIn()){
-            history.push('/')
-        }
-    },[])
 
     const handleChange = (e) => {
         setState({
@@ -31,33 +21,29 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        setState({...state,buttonText:'Logging In'})
-        const {password,email} = state
+        setState({...state,buttonText:'Registering'})
+        const {username,password,email} = state
         const fd ={
-            password,email
+            username,password,email
         }
         console.log(fd)
-        axios.post(`/users/login`,fd)
+        axios.post(`/users/register`,fd)
             .then(response => {
-                console.log(response.data)
+                console.log(response)
                 if(response.data.ok == true){
-                    authenticate(response,()=>{
-                        toast.success(response.data.msg)
-                        setState({
-                            password: "",
-                            email: "",
-                            buttonText: "Signed In"
-                        })
-                        setTimeout(() => {
-                            isAdmin() ? history.push('/admin') : history.push('/')
-                        },3000)
+                    toast.success(response.data.msg)
+                    setState({
+                        username: "",
+                        password: "",
+                        email: "",
+                        buttonText: "Registered"
                     })
                 }
                 else if(response.data.ok == false){
                     toast.error(response.data.msg)
                     setState({
                         ...state,
-                        buttonText: "Sign In"
+                        buttonText: "Register"
                     })
                 }
             })
@@ -67,14 +53,18 @@ const Login = () => {
                     toast.error(err.response.data.msg)
                     setState({
                         ...state,
-                        buttonText: "Sign In"
+                        buttonText: "Register"
                     })
                 }
             })
     }
 
-    const loginForm = () => (
+    const registerForm = () => (
         <form onSubmit={handleSubmit}>
+            <div className='form-group'>
+                <label className='text-muted'>Username</label>
+                <input className='form-control' type='text' name='username' value={state.username} onChange={handleChange}/>
+            </div>
             <div className='form-group'>
                 <label className='text-muted'>Email</label>
                 <input className='form-control' type='email' name='email' value={state.email} onChange={handleChange}/>
@@ -92,10 +82,11 @@ const Login = () => {
         <Layout>
             <div className='col-md-6 offset-3'>
                 <ToastContainer/>
-                <h1 className='text-center p-5'>Login</h1>
-                {loginForm()}
+                <h1 className='text-center p-5'>Register</h1>
+                {registerForm()}
             </div>
         </Layout>
     )
 }
-export default Login
+
+export default Register
