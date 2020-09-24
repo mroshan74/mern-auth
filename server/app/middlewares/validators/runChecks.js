@@ -39,3 +39,19 @@ exports.runUpdateCheck = [
         .isLength({min: 6})
         .withMessage('Password should be of minimum 6 characters')
 ]
+
+exports.runResetCheck = [
+    check('email')
+        .not()
+        .isEmpty()
+        .isEmail()
+        .withMessage('Email should be valid'),
+]
+
+exports.runNewPassCheck = [
+    check('newPassword')
+        .not()
+        .isEmpty()
+        .isLength({min: 6})
+        .withMessage('Password should be of minimum 6 characters')
+]

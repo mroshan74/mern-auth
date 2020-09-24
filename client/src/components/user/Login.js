@@ -49,8 +49,8 @@ const Login = () => {
                             buttonText: "Signed In"
                         })
                         setTimeout(() => {
-                            isAdmin() ? history.push('/admin') : history.push('/')
-                        },3000)
+                            isAdmin() ? history.push('/admin/account') : history.push('/users/account')
+                        },2000)
                     })
                 }
                 else if(response.data.ok == false){

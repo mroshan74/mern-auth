@@ -25,11 +25,13 @@ const Layout = ({children,history}) => {
                         <Link className='nav-link' style={activeLink(history,'/admin')} to="/admin" >Admin</Link>
                     </li>
                     )}
-                    <li className="nav-item">
-                        <Link className='nav-link' style={activeLink(history,'/users/account')} to='/users/account'>
-                            Account
-                        </Link>
-                    </li>
+                    {!isAdmin() && (
+                        <li className="nav-item">
+                            <Link className='nav-link' style={activeLink(history,'/users/account')} to='/users/account'>
+                                Account
+                            </Link>
+                        </li>
+                    )}
                     <li className="nav-item">
                         <Link className='nav-link' style={activeLink(history,'/users/logout')} to='#' onClick={() => {
                             signout(() => {

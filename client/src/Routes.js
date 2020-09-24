@@ -12,6 +12,7 @@ import Login from './components/user/Login'
 
 import AdminPage from './components/test/AdminPage'
 import PrivatePage from './components/test/PrivatePage'
+import AdminAccount from './components/user/AdminAccount'
 
 const Routes = () => (
     <BrowserRouter>
@@ -23,6 +24,7 @@ const Routes = () => (
             <AdminRoute exact path='/admin' component={AdminPage} />
             <PrivateRoute exact path='/private' component={PrivatePage} />
             <PrivateRoute exact path='/users/account' component={Account} />
+            <AdminRoute exact path='/admin/account' component={AdminAccount} />
         </Switch>
     </BrowserRouter>
 )

@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 //middlewares
-const { runRegisterCheck, runLoginCheck, runUpdateCheck } = require('../app/middlewares/validators/runChecks')
+const { runRegisterCheck, runLoginCheck, runUpdateCheck, runResetCheck, runNewPassCheck } = require('../app/middlewares/validators/runChecks')
 const { runValidation } = require('../app/middlewares/validators/runValidation')
 const authenticateUser = require('../app/middlewares/auth/authentication')
 const isAdmin = require('../app/middlewares/auth/isAdmin')
@@ -21,6 +21,12 @@ router.post('/users/login', runLoginCheck, runValidation, authControllers.login)
 //user routes
 router.get('/users/account/', authenticateUser, userControllers.account)
 router.put('/users/account/update', authenticateUser, runUpdateCheck, runValidation, userControllers.update)
+router.put('/admin/account/update', authenticateUser,isAdmin, runUpdateCheck, runValidation, userControllers.update)
+
+//forget/reset password
+router.put('/users/reset-password', runResetCheck, runValidation, authControllers.forgotPassword)
+router.put('/auth/reset/:token',runNewPassCheck, runValidation, authControllers.resetPassword)
+
 
 //test
 router.put('/test', runUpdateCheck, runValidation, (req,res) => {
