@@ -21,3 +21,16 @@ exports.runLoginCheck = [
         .isLength({min: 6})
         .withMessage('Password should be of minimum 6 characters')
 ]
+
+exports.runUpdateCheck = [
+    check('username')
+        .optional("",null,undefined)
+        .isLength({min: 4})
+        .withMessage('Username should be of minimum 4 characters'),
+        
+
+    check('email')
+        .optional("",null,undefined)
+        .isEmail()
+        .withMessage('Email should be valid'),
+]

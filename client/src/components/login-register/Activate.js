@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo } from 'react'
-import { Link, Redirect, useParams } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import jwt from 'jsonwebtoken'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from '../../config/axios'
