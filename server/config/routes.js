@@ -29,6 +29,7 @@ router.put('/auth/reset/:token',runNewPassCheck, runValidation, authControllers.
 
 //google/facebook login route
 router.post('/users/login/google', authControllers.googleLogin)
+router.post('/users/login/facebook', authControllers.facebookLogin)
 
 
 //test

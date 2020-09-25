@@ -8,6 +8,7 @@ import axios from '../../config/axios'
 import 'react-toastify/dist/ReactToastify.min.css'
 import Layout from '../../core/Layout'
 import Google from '../../auth/Google'
+import Facebook from '../../auth/Facebook'
 
 const Login = () => {
     const history = useHistory()
@@ -30,7 +31,7 @@ const Login = () => {
         })
     }
 
-    const passGoogleData = (response) => {
+    const passSignInData = (response) => {
         if(response.data.ok == true){
             authenticate(response,()=>{
                 toast.success(response.data.msg)
@@ -111,7 +112,8 @@ const Login = () => {
             <div className='col-md-6 offset-3'>
                 <ToastContainer/>
                 <h1 className='text-center p-5'>Login</h1>
-                <Google passGoogleData={passGoogleData}/>
+                <Google passSignInData={passSignInData}/>
+                <Facebook passSignInData={passSignInData}/>
                 {loginForm()}
                 <div className='text-primary mt-4'>
                     <Link to='/users/account/reset'>Forgot Password?</Link>

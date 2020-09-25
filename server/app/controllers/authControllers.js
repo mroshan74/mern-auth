@@ -4,6 +4,7 @@ const sgMail = require('@sendgrid/mail')
 const User = require('../models/user')
 const { OAuth2Client } = require('google-auth-library')
 const shortid = require('shortid')
+const axios = require('axios')
 const authControllers = {}
 
 sgMail.setApiKey(process.env.SEND_GRID_SECRET_KEY)
@@ -331,6 +332,13 @@ authControllers.googleLogin = (req,res) => {
 
             if(email_verified){
                 User.findOne({email}).exec((err,user) => {
+                    if(err){
+                        return res.status(400).json({
+                            ok: false,
+                            msg: 'Failed to register User with Google',
+                            err
+                        })
+                    }
                     if(user){
                         let tokenData = {
                             _id: user._id,
@@ -390,6 +398,79 @@ authControllers.googleLogin = (req,res) => {
                 err
             })
         })
+}
+
+authControllers.facebookLogin = async (req,res) => {
+    const { userID, accessToken } = req.body
+    console.log(userID,accessToken)
+
+    const URL = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`
+
+    try{
+        let getResponse = await axios.get(URL)
+        //console.log(getResponse.data)
+        const { name, email } = getResponse.data
+        //console.log(name, email)
+
+        User.findOne({email}).exec((err,user) => {
+            if(err){
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Failed to register User with Facebook 1',
+                    err
+                })
+            }
+            if(user){
+                let tokenData = {
+                    _id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role
+                }
+                const token = jwt.sign(tokenData, process.env.JWT_SECRET,{ expiresIn: '2d'})
+                return res.json({
+                    token,
+                    user: tokenData,
+                    ok: true,
+                })
+            }
+            else{
+                let password = email + shortid.generate()
+                user = new User({ username: name, email, password})
+                user.save((err, savedUser) => {
+                    if(err){
+                        return res.status(400).json({
+                            ok: false,
+                            msg: 'Failed to register User with Facebook 2',
+                            err
+                        })
+                    }
+                    else{
+                        let tokenData = {
+                            _id: savedUser._id,
+                            username: savedUser.username,
+                            email: savedUser.email,
+                            role: savedUser.role
+                        }
+                        const token = jwt.sign(tokenData, process.env.JWT_SECRET,{ expiresIn: '2d'})
+                        return res.json({
+                            token,
+                            user: tokenData,
+                            ok: true,
+                        })
+                    }
+                })
+            }
+        })
+    }
+    catch(err){
+        console.log(err)
+        return res.status(400).json({
+            ok: false,
+            msg: 'Failed to register User with Facebook 3',
+            err
+        })
+    }
 }
 
 module.exports = authControllers
