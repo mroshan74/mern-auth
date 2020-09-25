@@ -7,6 +7,7 @@ import { isAdmin, isSignedIn } from '../../auth/isAuth'
 import axios from '../../config/axios'
 import 'react-toastify/dist/ReactToastify.min.css'
 import Layout from '../../core/Layout'
+import Google from '../../auth/Google'
 
 const Login = () => {
     const history = useHistory()
@@ -27,6 +28,23 @@ const Login = () => {
             ...state,
             [e.target.name]:e.target.value,
         })
+    }
+
+    const passGoogleData = (response) => {
+        if(response.data.ok == true){
+            authenticate(response,()=>{
+                toast.success(response.data.msg)
+                setTimeout(() => {
+                    isAdmin() ? history.push('/admin/account') : history.push('/users/account')
+                },1000)
+            })
+        }
+        else if(response.data.ok == false){
+            toast.error(response.data.msg)
+        }
+        else{
+            toast.error('Login with Google Failed')
+        }
     }
 
     const handleSubmit = (e) => {
@@ -93,6 +111,7 @@ const Login = () => {
             <div className='col-md-6 offset-3'>
                 <ToastContainer/>
                 <h1 className='text-center p-5'>Login</h1>
+                <Google passGoogleData={passGoogleData}/>
                 {loginForm()}
                 <div className='text-primary mt-4'>
                     <Link to='/users/account/reset'>Forgot Password?</Link>

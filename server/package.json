@@ -23,10 +23,11 @@
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
     "express-validator": "^6.6.1",
-    "google-auth-library": "^6.0.6",
+    "google-auth-library": "^6.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.6",
     "morgan": "^1.10.0",
+    "shortid": "^2.2.15",
     "validator": "^13.1.17"
   }
 }

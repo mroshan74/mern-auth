@@ -27,6 +27,9 @@ router.put('/admin/account/update', authenticateUser,isAdmin, runUpdateCheck, ru
 router.put('/users/account/reset', runResetCheck, runValidation, authControllers.forgotPassword)
 router.put('/auth/reset/:token',runNewPassCheck, runValidation, authControllers.resetPassword)
 
+//google/facebook login route
+router.post('/users/login/google', authControllers.googleLogin)
+
 
 //test
 router.put('/test', runUpdateCheck, runValidation, (req,res) => {

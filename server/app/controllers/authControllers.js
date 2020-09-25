@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 const sgMail = require('@sendgrid/mail')
 const User = require('../models/user')
+const { OAuth2Client } = require('google-auth-library')
+const shortid = require('shortid')
 const authControllers = {}
 
 sgMail.setApiKey(process.env.SEND_GRID_SECRET_KEY)
@@ -316,6 +318,78 @@ authControllers.resetPassword = (req,res) => {
             msg: 'Unauthorized',
         })
     }
+}
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+authControllers.googleLogin = (req,res) => {
+    const { idToken } = req.body
+
+    client.verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID })
+        .then(response => {
+            console.log(response)
+            const { name, email, email_verified } = response.payload
+
+            if(email_verified){
+                User.findOne({email}).exec((err,user) => {
+                    if(user){
+                        let tokenData = {
+                            _id: user._id,
+                            username: user.username,
+                            email: user.email,
+                            role: user.role
+                        }
+                        const token = jwt.sign(tokenData, process.env.JWT_SECRET,{ expiresIn: '2d'})
+                        return res.json({
+                            token,
+                            user: tokenData,
+                            ok: true,
+                        })
+                    }
+                    else{
+                        let password = email + shortid.generate()
+                        user = new User({ username: name, email, password})
+                        user.save((err, savedUser) => {
+                            if(err){
+                                return res.status(400).json({
+                                    ok: false,
+                                    msg: 'Failed to register User with Google',
+                                    err
+                                })
+                            }
+                            else{
+                                let tokenData = {
+                                    _id: savedUser._id,
+                                    username: savedUser.username,
+                                    email: savedUser.email,
+                                    role: savedUser.role
+                                }
+                                const token = jwt.sign(tokenData, process.env.JWT_SECRET,{ expiresIn: '2d'})
+                                return res.json({
+                                    token,
+                                    user: tokenData,
+                                    ok: true,
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+            else{
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Failed to register User with Google',
+                    err
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            return res.status(500).json({
+                ok: false,
+                msg: 'Unable to register. Please try again later!',
+                err
+            })
+        })
 }
 
 module.exports = authControllers
